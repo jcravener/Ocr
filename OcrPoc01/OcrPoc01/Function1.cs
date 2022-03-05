@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using WestUs3OcrPoc.Handlers;
 using Newtonsoft.Json;
-using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
-using System.Collections.Generic;
 
 namespace WestUs3_OCR_OPC
 {

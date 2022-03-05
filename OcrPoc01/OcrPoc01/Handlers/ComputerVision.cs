@@ -1,6 +1,7 @@
 ﻿using Microsoft.Azure.CognitiveServices.Vision.ComputerVision;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 using Microsoft.Extensions.Logging;
+using OcrPoc01.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -35,7 +36,7 @@ namespace WestUs3OcrPoc.Handlers
             return client;
         }
 
-        public async Task<IList<ReadResult>> ReadFileUrl(OcrRequest request)
+        public async Task<OrcResponse> ReadFileUrl(OcrRequest request)
         {
             Log.LogInformation("----------------------------------------------------------");
             Log.LogInformation($"Read file from URL: {request.Url}, Using MODELVERSION: {request.ModelVersion}");
@@ -67,21 +68,30 @@ namespace WestUs3OcrPoc.Handlers
             while ((results.Status == OperationStatusCodes.Running ||
                 results.Status == OperationStatusCodes.NotStarted));
 
-            var indexes = new ScoreCard(results, request).GetNameIndexes();
-
+            var scoreCard = new ScoreCard(results, request);
+            var response = new OrcResponse
+            {
+                Names = scoreCard.GetCleanNames(),
+                LineText = scoreCard.GetAllLineText()
+            };
 
             // Display the found text.
-            var textUrlFileResults = results.AnalyzeResult.ReadResults;
-            foreach (ReadResult page in textUrlFileResults)
+            //var textUrlFileResults = results.AnalyzeResult.ReadResults;
+            //foreach (ReadResult page in textUrlFileResults)
+            //{
+            //    foreach (Line line in page.Lines)
+            //    {
+            //        Log.LogInformation(line.Text);
+            //    }
+            //}
+
+            foreach (var txt in response.LineText)
             {
-                foreach (Line line in page.Lines)
-                {
-                    Log.LogInformation(line.Text);
-                }
+                Log.LogInformation(txt);
             }
 
             Log.LogInformation("Done");
-            return textUrlFileResults;
+            return response;
         }
     }
 }

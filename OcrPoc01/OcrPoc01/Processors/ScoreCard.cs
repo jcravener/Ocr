@@ -66,5 +66,13 @@ namespace WestUs3_OCR_OPC.Processors
 
             return NameIndexes;
         }
+
+        public IList<string> GetAllLineText()
+        {
+            var results = from line in Lines
+                          select line.Text;
+
+            return results.ToList();
+        }
     }
 }
